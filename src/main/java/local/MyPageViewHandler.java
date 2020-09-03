@@ -88,4 +88,22 @@ public class MyPageViewHandler {
             e.printStackTrace();
         }
     }
+    
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenPreQuestionSent_then_UPDATE_3(@Payload PreQuestionSent rreQuestionSent) {
+        try {
+            if (rreQuestionSent.isMe()) {
+                // view 객체 조회
+                List<MyPage> myPageList = myPageRepository.findByScreeningId(rreQuestionSent.getScreeningId());
+                for (MyPage myPage : myPageList) {
+                    // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    myPage.setStatus("PRE_Q_SENT");
+                    // view 레파지 토리에 save
+                    myPageRepository.save(myPage);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
